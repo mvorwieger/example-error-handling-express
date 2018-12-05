@@ -10,6 +10,11 @@ const logger = winston.createLogger({
     ]
 })
 
+// To also log errors outside of the context of express we listen to global errors
+process.on("uncaughtException", (err) => {
+    logger.error(err.message, err)
+})
+
 app.use(express.json())
 
 app.get("/testRoute", (res, req) => {
