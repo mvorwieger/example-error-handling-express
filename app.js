@@ -11,8 +11,15 @@ const logger = winston.createLogger({
 })
 
 // To also log errors outside of the context of express we listen to global errors
-process.on("uncaughtException", (err) => {
-    logger.error(err.message, err)
+winston.exceptions.handle(
+    new winston.transports.Console({ colorize: true, prettyPrint: true }),
+    new winston.transports.File({ filename: "uncaughtExceptions.log" })
+)
+
+// We also want to handle Promise Rejections
+process.on("unhandledRejection", err => {
+    // We throw a error here so the error gets delegated to our "logger.handleExecptions"
+    throw err;
 })
 
 app.use(express.json())
